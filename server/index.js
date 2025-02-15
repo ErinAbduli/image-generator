@@ -2,6 +2,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import PostRouter from './routes/Posts.js';
+import GenerateAiImageRouter from './routes/GenerateAiImages.js';
 
 dotenv.config();
 
@@ -9,6 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/api/posts", PostRouter);
+app.use("/api/generateImage", GenerateAiImageRouter);
 
 //error handler
 app.use((err, req, res, next) => {
@@ -32,12 +37,7 @@ app.get('/', (req, res) => {
 //connect to mongodb
 const connectDB = () => {
     mongoose.set("strictQuery", true);
-    mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false
-    })
+    mongoose.connect(process.env.MONGO_URI)
         .then(() => {
             console.log('Connected to MongoDB');
         }).catch((error) => {
